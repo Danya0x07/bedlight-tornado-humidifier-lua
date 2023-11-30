@@ -85,7 +85,7 @@ function M.mist(mode)
         end
         if fanlvl == M.FAN_OFF then
             print('Fan on')
-            fanlvl = M.FAN_LVL1
+            fanlvl = M.FAN_LVL2 -- 1 is too low
         end
     else
         print('Mist off')
