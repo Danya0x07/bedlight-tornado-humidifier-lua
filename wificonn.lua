@@ -13,7 +13,7 @@ end
 
 ----[[
 wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, function(T)
-    print("\n\tSTA - CONNECTED" .. "\n\tSSID: " .. T.SSID .. "\n\tBSSID: " ..
+    print("\n\tSTA - CONNECTED TO AP" .. "\n\tSSID: " .. T.SSID .. "\n\tBSSID: " ..
         T.BSSID .. "\n\tChannel: " .. T.channel)
     timer_tryconn:stop()
     M.callback_on_connected()
@@ -21,7 +21,7 @@ end)
 
 ----[[
 wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, function(T)
-    print("\n\tSTA - DISCONNECTED" .. "\n\tSSID: " .. T.SSID .. "\n\tBSSID: " ..
+    print("\n\tSTA - DISCONNECTED FROM AP" .. "\n\tSSID: " .. T.SSID .. "\n\tBSSID: " ..
         T.BSSID .. "\n\treason: " .. T.reason)
     M.callback_on_connecting()
     timer_tryconn:start()
@@ -61,13 +61,14 @@ end) --]]
 
 ----[[
 wifi.eventmon.register(wifi.eventmon.WIFI_MODE_CHANGED, function(T)
-    print("\n\tSTA - WIFI MODE CHANGED" .. "\n\told_mode: " ..
-        T.old_mode .. "\n\tnew_mode: " .. T.new_mode)
     if T.new_mode == wifi.STATION then
+        print('======= STATION MODE =======')
         M.callback_on_connecting()
     elseif T.new_mode == wifi.SOFTAP then
+        print('==== ACCESS POINT MODE =====')
         M.callback_on_ap()
     else
+        print('========= WIFI OFF =========')
         M.callback_on_wifi_off()
     end
 end) --]]
@@ -87,7 +88,7 @@ local sta_conf = {
     save = false
 }
 
-function M.wifi_enabled()
+function M.enabled()
     return wifi.getmode() ~= wifi.NULLMODE
 end
 
@@ -123,7 +124,7 @@ function M.enable_ap()
     wifi.ap.config(ap_conf)
 end
 
-function M.disable_wifi()
+function M.disable()
     wifi.setmode(wifi.NULLMODE, false)
 end
 
@@ -145,8 +146,10 @@ function M.reconf_sta(new_sta)
         end
         print('New STA configuration written to Flash.')
         timestamp = now
+        return true
     else
         print('New STA configuration discarded.')
+        return false
     end
 end
 
