@@ -1,5 +1,5 @@
 local M = {
-    debug = true,
+    debug = false,
     data = {},
     callback = function(data) end
 }
