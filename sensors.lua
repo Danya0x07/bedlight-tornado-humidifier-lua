@@ -18,13 +18,13 @@ end
 
 local function measure()
     local sample = adc.read(0)
-    
+
     if M.debug then
         print('ADC sample: '..sample)
     end
     M.data.water_enough = water_is_enough(sample)
 
-    status, temp, hum, temp_dec, hum_dec = dht.read(PIN_DHT)
+    local status, temp, hum, temp_dec, hum_dec = dht.read(PIN_DHT)
     if status ~= dht.OK then
         print('DHT error: '..status)
     else

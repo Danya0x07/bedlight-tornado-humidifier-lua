@@ -18,7 +18,9 @@ local M = {
     FAN_LVL4 = 3, -- 62||43 ≈ 25 Ohm
     FAN_LVL5 = 5, -- 62||27 ≈ 18 Ohm
     FAN_LVL6 = 6, -- 43||27 ≈ 17 Ohm
-    FAN_LVL7 = 7  -- 62||43||27 ≈ 13 Ohm
+    FAN_LVL7 = 7,  -- 62||43||27 ≈ 13 Ohm
+
+    debug = false
 }
 
 local PIN_DATA = 5
@@ -61,16 +63,22 @@ local function update_shiftreg()
     end
 end
 
+local function debug_print(...)
+    if M.debug then
+        print(...)
+    end
+end
+
 function M.gen(state)
     genstate = bit.band(state, 1)
     if genstate == M.GENERATOR_OFF then
-        print('Generator off')
+        debug_print('Generator off')
         if mistmode ~= M.MIST_OFF then
-            print('Mist off')
+            debug_print('Mist off')
             mistmode = M.MIST_OFF
         end
     else
-        print('Generator on')
+        debug_print('Generator on')
     end
     update_shiftreg()
 end
@@ -78,17 +86,17 @@ end
 function M.mist(mode)
     mistmode = bit.band(mode, 7)
     if mistmode ~= M.MIST_OFF then
-        print('Mist mode '..mistmode)
+        debug_print('Mist mode '..mistmode)
         if genstate == M.GENERATOR_OFF then
-            print('Generator on')
+            debug_print('Generator on')
             genstate = M.GENERATOR_ON
         end
         if fanlvl == M.FAN_OFF then
-            print('Fan on')
+            debug_print('Fan on')
             fanlvl = M.FAN_LVL2 -- 1 is too low
         end
     else
-        print('Mist off')
+        debug_print('Mist off')
     end
     update_shiftreg()
 end
@@ -96,13 +104,13 @@ end
 function M.fan(level)
     fanlvl = bit.band(level, 7)
     if fanlvl == M.FAN_OFF then
-        print('Fan off')
+        debug_print('Fan off')
         if mistmode ~= M.MIST_OFF then
-            print('Mist off')
+            debug_print('Mist off')
             mistmode = M.MIST_OFF
         end
     else
-        print('Fan level '..fanlvl)
+        debug_print('Fan level '..fanlvl)
     end
     update_shiftreg()
 end

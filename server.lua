@@ -6,7 +6,8 @@ local M = {
     callback_update_humidity_threshold = function (new_thresh) return 0 end,
     callback_set_tornado_state = function (new_state) return 0 end,
     callback_set_colors = function (c0, c1, c2, c3) return 0 end,
-    callback_set_lighteffect = function (new_effect) return 0 end
+    callback_set_lighteffect = function (new_effect) return 0 end,
+    debug = false
 }
 
 local cs = coap.Server()
@@ -28,6 +29,9 @@ end
 
 function M.update_status(new_status)
     status = sjson.encode(new_status)
+    if M.debug then
+        print(status)
+    end
 end
 
 cs:var('sensordata', coap.JSON)
@@ -56,7 +60,7 @@ end
 function humthreshold(payload)
     local thresh = tonumber(payload) or -1
     local ret = M.callback_update_humidity_threshold(thresh)
-    
+
     if ret == M.OK then
         return 'Humidity threshold updated.'
     elseif ret == M.NA then
