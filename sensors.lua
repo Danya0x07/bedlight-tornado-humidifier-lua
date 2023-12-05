@@ -1,6 +1,10 @@
 local M = {
     debug = false,
-    data = {},
+    data = {
+        water_enough = true,
+        temperature = -273,
+        humidity = -1
+    },
     callback = function(data) end
 }
 
@@ -9,11 +13,12 @@ local PIN_DHT = 2
 local timer = tmr.create()
 
 local function water_is_enough(sample)
-    return sample > 512 -- TODO: calibrate
+    return sample > 300
 end
 
 local function measure()
     local sample = adc.read(0)
+    
     if M.debug then
         print('ADC sample: '..sample)
     end
