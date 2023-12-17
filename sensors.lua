@@ -1,11 +1,11 @@
 local M = {
-    debug = false,
+    -- debug = false,
     data = {
         water_enough = true,
         temperature = -273,
         humidity = -1
     },
-    callback = function(data) end
+    -- callback = function(data) end
 }
 
 local PIN_DHT = 2
@@ -19,18 +19,18 @@ end
 local function measure()
     local sample = adc.read(0)
 
-    if M.debug then
+    --[[ if M.debug then
         print('ADC sample: '..sample)
-    end
+    end --]]
     M.data.water_enough = water_is_enough(sample)
 
     local status, temp, hum, temp_dec, hum_dec = dht.read(PIN_DHT)
     if status ~= dht.OK then
-        print('DHT error: '..status)
+        print('DE: '..status)
     else
-        if M.debug then
+        --[[ if M.debug then
             print('Temperature: '..temp..'.'..temp_dec..'\tHumidity: '..hum..'.'..hum_dec)
-        end
+        end --]]
         M.data.temperature = temp
         M.data.humidity = hum
     end

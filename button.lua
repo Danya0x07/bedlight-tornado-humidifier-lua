@@ -1,19 +1,8 @@
 local M = {
-    callback_1press = function ()
-        print('Press')
-    end,
-
-    callback_2press = function ()
-        print('DoublePress')
-    end,
-
-    callback_3press = function ()
-        print('TripplePress')
-    end,
-
-    callback_longpress = function ()
-        print('LongPress')
-    end
+    -- callback_1press = function () print('Press') end,
+    -- callback_2press = function () print('DoublePress') end,
+    -- callback_3press = function () print('TripplePress') end,
+    -- callback_longpress = function () print('LongPress') end
 }
 
 local PIN_BTN = 1
@@ -48,7 +37,7 @@ local function on_trig(level, when, eventcount)
             presscount = presscount + 1
 
             if presscount == 1 then
-                timer:alarm(3000, tmr.ALARM_SINGLE, check_will_stay_pressed)
+                timer:alarm(2500, tmr.ALARM_SINGLE, check_will_stay_pressed)
             elseif presscount < 3 then
                 timer:alarm(250, tmr.ALARM_SINGLE, check_will_not_transit)
             end

@@ -2,12 +2,17 @@ local M = {
     OK = 0,
     NA = 1,
     BADVAL = 2,
-    callback_update_wifi_credentials = function (new_creds) return 0 end,
-    callback_update_humidity_threshold = function (new_thresh) return 0 end,
-    callback_set_tornado_state = function (new_state) return 0 end,
-    callback_set_colors = function (c0, c1, c2, c3) return 0 end,
-    callback_set_lighteffect = function (new_effect) return 0 end,
-    debug = false
+    -- callback_update_wifi_credentials = function (new_creds) return 0 end,
+    -- callback_update_humidity_threshold = function (new_thresh) return 0 end,
+    -- callback_set_tornado_state = function (new_state) return 0 end,
+    -- callback_set_colors = function (c1, c2, c3, c4) return 0 end,
+    -- callback_set_lighteffect = function (new_effect) return 0 end,
+    -- debug = false
+}
+local retstrings = {
+    [M.OK] = 'OK',
+    [M.NA] = 'NA',
+    [M.BADVAL] = 'BADVAL'
 }
 
 local cs = coap.Server()
@@ -29,9 +34,9 @@ end
 
 function M.update_status(new_status)
     status = sjson.encode(new_status)
-    if M.debug then
-        print(status)
-    end
+    -- if M.debug then
+        -- print(status)
+    -- end
 end
 
 cs:var('sensordata', coap.JSON)
@@ -45,59 +50,44 @@ function wificredentials(payload)
     end
 
     if type(crs.ssid) == 'string' and type(crs.pwd) == 'string' then
-        local ret = M.callback_update_wifi_credentials(crs)
-
-        if ret == M.OK then
-            return 'Station configuration updated.'
-        elseif ret == M.NA then
-            return 'Try later'
-        end
+        local retcode = M.callback_update_wifi_credentials(crs)
+        return retstrings[retcode]
     end
 
-    return 'Bad creds'
+    return retstrings[M.BADVAL]
 end
 
 function humthreshold(payload)
     local thresh = tonumber(payload) or -1
-    local ret = M.callback_update_humidity_threshold(thresh)
+    local retcode = M.callback_update_humidity_threshold(thresh)
 
-    if ret == M.OK then
-        return 'Humidity threshold updated.'
-    elseif ret == M.NA then
-        return 'Try later'
-    else
-        return 'Bad threshold'
-    end
+    return retstrings[retcode]
 end
 
 function tornadoctl(payload)
     local state = tonumber(payload) or -1
-    local ret = M.callback_set_tornado_state(state)
+    local retcode = M.callback_set_tornado_state(state)
 
-    if ret == M.OK then
-        return 'Tornado state updated.'
-    elseif ret == M.NA then
-        return 'Water not enough'
-    else
-        return 'Bad state value'
-    end
+    return retstrings[retcode]
 end
 
 function colors(payload)
     if payload:len() ~= 4 then
-        return 'Bad color format'
+        return retstrings[M.BADVAL]
     end
 
-    local c0 = payload:sub(1, 1)
-    local c1 = payload:sub(2, 2)
-    local c2 = payload:sub(3, 3)
-    local c3 = payload:sub(4, 4)
+    local c1 = payload:sub(1, 1)
+    local c2 = payload:sub(2, 2)
+    local c3 = payload:sub(3, 3)
+    local c4 = payload:sub(4, 4)
 
-    return M.callback_set_colors(c0, c1, c2, c3) == M.OK and 'Ok.' or 'Bad color'
+    local retcode = M.callback_set_colors(c1, c2, c3, c4)
+    return retstrings[retcode]
 end
 
 function lighteffect(payload)
-    return M.callback_set_lighteffect(payload) == M.OK and 'Ok.' or 'Bad effect'
+    local retcode = M.callback_set_lighteffect(tonumber(payload))
+    return retstrings[retcode]
 end
 
 cs:func('wificredentials')

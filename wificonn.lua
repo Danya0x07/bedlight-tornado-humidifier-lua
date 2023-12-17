@@ -1,8 +1,8 @@
 local M = {
-    callback_on_connecting = function() print('Connecting...') end,
-    callback_on_connected = function() print('Connected.') end,
-    callback_on_ap = function() print('Acess Point enabled.') end,
-    callback_on_wifi_off = function () print('Wifi off.') end
+    -- callback_on_connecting = function() print('Connecting...') end,
+    -- callback_on_connected = function() print('Connected.') end,
+    -- callback_on_ap = function() print('Acess Point enabled.') end,
+    -- callback_on_wifi_off = function () print('Wifi off.') end
 }
 
 local timer_tryconn = tmr.create()
@@ -13,19 +13,19 @@ end
 
 ----[[
 wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, function(T)
-    print("\n\tSTA - CONNECTED TO AP" .. "\n\tSSID: " .. T.SSID .. "\n\tBSSID: " ..
-        T.BSSID .. "\n\tChannel: " .. T.channel)
+    -- print("\n\tSTA - CONNECTED TO AP" .. "\n\tSSID: " .. T.SSID .. "\n\tBSSID: " ..
+        -- T.BSSID .. "\n\tChannel: " .. T.channel)
     timer_tryconn:stop()
     M.callback_on_connected()
-end)
+end) --]]
 
 ----[[
 wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, function(T)
-    print("\n\tSTA - DISCONNECTED FROM AP" .. "\n\tSSID: " .. T.SSID .. "\n\tBSSID: " ..
-        T.BSSID .. "\n\treason: " .. T.reason)
+    -- print("\n\tSTA - DISCONNECTED FROM AP" .. "\n\tSSID: " .. T.SSID .. "\n\tBSSID: " ..
+        -- T.BSSID .. "\n\treason: " .. T.reason)
     M.callback_on_connecting()
     timer_tryconn:start()
-end)
+end) --]]
 
 --[[
 wifi.eventmon.register(wifi.eventmon.STA_AUTHMODE_CHANGE, function(T)
@@ -33,23 +33,23 @@ wifi.eventmon.register(wifi.eventmon.STA_AUTHMODE_CHANGE, function(T)
         T.old_auth_mode .. "\n\tnew_auth_mode: " .. T.new_auth_mode)
 end) --]]
 
-----[[
+--[[
 wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(T)
     print("\n\tSTA - GOT IP" .. "\n\tStation IP: " .. T.IP .. "\n\tSubnet mask: " ..
         T.netmask .. "\n\tGateway IP: " .. T.gateway)
 end) --]]
 
-----[[
+--[[
 wifi.eventmon.register(wifi.eventmon.STA_DHCP_TIMEOUT, function()
     print("\n\tSTA - DHCP TIMEOUT")
 end) --]]
 
-----[[
+--[[
 wifi.eventmon.register(wifi.eventmon.AP_STACONNECTED, function(T)
     print("\n\tAP - STATION CONNECTED" .. "\n\tMAC: " .. T.MAC .. "\n\tAID: " .. T.AID)
 end) --]]
 
-----[[
+--[[
 wifi.eventmon.register(wifi.eventmon.AP_STADISCONNECTED, function(T)
     print("\n\tAP - STATION DISCONNECTED" .. "\n\tMAC: " .. T.MAC .. "\n\tAID: " .. T.AID)
 end) --]]
@@ -62,13 +62,13 @@ end) --]]
 ----[[
 wifi.eventmon.register(wifi.eventmon.WIFI_MODE_CHANGED, function(T)
     if T.new_mode == wifi.STATION then
-        print('======= STATION MODE =======')
+        -- print('======= STATION MODE =======')
         M.callback_on_connecting()
     elseif T.new_mode == wifi.SOFTAP then
-        print('==== ACCESS POINT MODE =====')
+        -- print('==== ACCESS POINT MODE =====')
         M.callback_on_ap()
     else
-        print('========= WIFI OFF =========')
+        -- print('========= WIFI OFF =========')
         M.callback_on_wifi_off()
     end
 end) --]]
@@ -100,7 +100,7 @@ function M.enable_sta()
         sta_conf.ssid = conf.ssid
         sta_conf.pwd = conf.pwd
         fd:close()
-        print('STA_SSID: '..sta_conf.ssid..'\tSTA_PWD: '..sta_conf.pwd)
+        -- print('STA_SSID: '..sta_conf.ssid..'\tSTA_PWD: '..sta_conf.pwd)
     end
 
     wifi.setmode(wifi.STATION, false)
@@ -117,7 +117,7 @@ function M.enable_ap()
         ap_conf.ssid = conf.ssid
         ap_conf.pwd = conf.pwd
         fd:close()
-        print('AP_SSID: '..ap_conf.ssid..'\tAP_PWD: '..ap_conf.pwd)
+        -- print('AP_SSID: '..ap_conf.ssid..'\tAP_PWD: '..ap_conf.pwd)
     end
 
     wifi.setmode(wifi.SOFTAP, false)
@@ -144,11 +144,11 @@ function M.reconf_sta(new_sta)
             fd:write(jstr)
             fd:close()
         end
-        print('New STA configuration written to Flash.')
+        -- print('New STA configuration written to Flash.')
         timestamp = now
         return true
     else
-        print('New STA configuration discarded.')
+        -- print('New STA configuration discarded.')
         return false
     end
 end
